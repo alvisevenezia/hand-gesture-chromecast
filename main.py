@@ -12,6 +12,9 @@ last_time = 0
 starting_coordonate_ok = (0, 0)
 last_frame_ok = False
 
+starting_coordonate_sound = (0, 0)
+last_frame_sound = False
+
 
 def signal_handler(sig, frame):
     print('You pressed Ctrl+C!')
@@ -26,7 +29,7 @@ hands = map_hand.Hands(
 
 print("running...")
 
-labels = ["closed","ok","rock","open"]
+labels = ["closed","time","rock","open","sound"]
 
 signal.signal(signal.SIGINT, signal_handler)
 
@@ -80,24 +83,45 @@ while True:
 
         cv2.putText(frame, prediction_label, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
 
-        if labels[np.argmax(prediction)] == "ok":
+        if labels[np.argmax(prediction)] == "time":
+
+            last_frame_sound = False
 
             if last_frame_ok:
                 distance_in_x = starting_coordonate_ok[0] - results.multi_hand_landmarks[0].landmark[8].x
 
                 #draw a line between the two points
 
-                color = (0, 0, 255)
+                color = (0, 0, 255) if distance_in_x > 0 else (0, 255, 0)
 
                 cv2.line(frame, (int(starting_coordonate_ok[0]*w),int(h/2)), (int(results.multi_hand_landmarks[0].landmark[8].x*w),int(h/2)), color, 2)
 
             else:  
                 starting_coordonate_ok = (results.multi_hand_landmarks[0].landmark[8].x, results.multi_hand_landmarks[0].landmark[8].y)
                 last_frame_ok = True
-                
 
-        else:
+        if labels[np.argmax(prediction)] == "sound":
+                
             last_frame_ok = False
+
+            if last_frame_sound:
+                distance_in_x = starting_coordonate_sound[0] - results.multi_hand_landmarks[0].landmark[8].x
+
+                #draw a line between the two points
+
+                color = (0, 255, 0) if distance_in_x < 0 else (0, 0, 255)
+
+                cv2.line(frame, (int(w/2),int(starting_coordonate_sound[1]*h)), (int(w/2),int(results.multi_hand_landmarks[0].landmark[8].y*h)), color, 2)
+
+            else:
+                starting_coordonate_sound = (results.multi_hand_landmarks[0].landmark[8].x, results.multi_hand_landmarks[0].landmark[8].y)
+                last_frame_sound = True
+
+    else:
+        last_frame_ok = False
+        last_frame_sound = False
+
+        
         
 
     cv2.imshow('Hand Gesture', frame)

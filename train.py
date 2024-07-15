@@ -37,9 +37,9 @@ if len(train_data) == 0:
 
 # Define callbacks
 
-num_classes = 4
-batch_size = 32
-epochs = 100
+num_classes = 5
+batch_size = 16
+epochs = 250
 
 # Prepare training and testing data
 x_train = train_data[:, 1:]
@@ -62,6 +62,7 @@ print("y_test shape:", y_test.shape)
 model = keras.models.Sequential(
     [
         keras.layers.Input(shape=(63, 1)),
+        keras.layers.Conv1D(32, 3, activation="relu"),
         keras.layers.Flatten(),
         keras.layers.Dense(40, activation="relu"),
         keras.layers.Dropout(0.2),
