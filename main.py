@@ -15,6 +15,11 @@ last_frame_ok = False
 starting_coordonate_sound = (0, 0)
 last_frame_sound = False
 
+color_green = '\033[92m'
+color_red = '\033[91m'
+color_end = '\033[0m'
+color_blue = '\033[94m'
+color_yellow = '\033[93m'
 
 def signal_handler(sig, frame):
     print('You pressed Ctrl+C!')
@@ -29,7 +34,7 @@ hands = map_hand.Hands(
 
 print("running...")
 
-labels = ["closed","time","rock","open","sound"]
+labels = ["closed","time","sound","open"]
 
 signal.signal(signal.SIGINT, signal_handler)
 
@@ -88,16 +93,14 @@ while True:
             last_frame_sound = False
 
             if last_frame_ok:
-                distance_in_x = starting_coordonate_ok[0] - results.multi_hand_landmarks[0].landmark[8].x
+                distance_in_x = starting_coordonate_ok[0] - results.multi_hand_landmarks[0].landmark[4].x
 
-                #draw a line between the two points
+                color_to_use = color_green if distance_in_x > 0 else color_red
 
-                color = (0, 0, 255) if distance_in_x > 0 else (0, 255, 0)
-
-                cv2.line(frame, (int(starting_coordonate_ok[0]*w),int(h/2)), (int(results.multi_hand_landmarks[0].landmark[8].x*w),int(h/2)), color, 2)
-
+                print(color_blue + "Time : " + color_end + color_to_use + str(distance_in_x) + color_end)
+                
             else:  
-                starting_coordonate_ok = (results.multi_hand_landmarks[0].landmark[8].x, results.multi_hand_landmarks[0].landmark[8].y)
+                starting_coordonate_ok = (results.multi_hand_landmarks[0].landmark[4].x, results.multi_hand_landmarks[0].landmark[4].y)
                 last_frame_ok = True
 
         if labels[np.argmax(prediction)] == "sound":
@@ -105,31 +108,16 @@ while True:
             last_frame_ok = False
 
             if last_frame_sound:
-                distance_in_x = starting_coordonate_sound[0] - results.multi_hand_landmarks[0].landmark[8].x
+                distance_in_x = starting_coordonate_sound[0] - results.multi_hand_landmarks[0].landmark[4].x
 
-                #draw a line between the two points
+                color_to_use = color_green if distance_in_x > 0 else color_red
 
-                color = (0, 255, 0) if distance_in_x < 0 else (0, 0, 255)
-
-                cv2.line(frame, (int(w/2),int(starting_coordonate_sound[1]*h)), (int(w/2),int(results.multi_hand_landmarks[0].landmark[8].y*h)), color, 2)
+                print(color_yellow + "Sound : " + color_end + color_to_use + str(distance_in_x) + color_end)
 
             else:
-                starting_coordonate_sound = (results.multi_hand_landmarks[0].landmark[8].x, results.multi_hand_landmarks[0].landmark[8].y)
+                starting_coordonate_sound = (results.multi_hand_landmarks[0].landmark[4].x, results.multi_hand_landmarks[0].landmark[4].y)
                 last_frame_sound = True
 
     else:
         last_frame_ok = False
         last_frame_sound = False
-
-        
-        
-
-    cv2.imshow('Hand Gesture', frame)
-    if cv2.waitKey(1) & 0xFF == ord('c'):
-        break
-
-
-
-cap.release()
-cv2.destroyAllWindows()
-
