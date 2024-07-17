@@ -24,7 +24,7 @@ print("running...")
 
 signal.signal(signal.SIGINT, signal_handler)
 
-data_file = open("./training_data/training_data.csv", "a")
+data_file = open("./training_data/training_data_left-right.csv", "a")
 
 #open a box with the webcan feed and the hand detection
 while True:

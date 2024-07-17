@@ -3,3 +3,9 @@ opencv-python
 mediapipe
 keras
 tensorflow
+pychromecast
+tensorboard-data-server
+markupsafe
+scipy
+pillow
+kiwisolver

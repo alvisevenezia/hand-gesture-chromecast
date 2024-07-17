@@ -103,4 +103,4 @@ print(score)
 print("Test loss:", score[0])
 print("Test accuracy:", score[1])
 
-model.save("./saved_models/trained/model.keras")
+model.save("./saved_models/trained/model-pattern.keras")
