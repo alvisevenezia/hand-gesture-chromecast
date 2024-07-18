@@ -9,3 +9,6 @@ markupsafe
 scipy
 pillow
 kiwisolver
+torch
+lxml
+uuid
