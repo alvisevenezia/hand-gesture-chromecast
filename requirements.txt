@@ -12,3 +12,6 @@ kiwisolver
 torch
 lxml
 uuid
+protobuf3-to-dict
+torchvision
+alive_progress

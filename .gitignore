@@ -6,3 +6,4 @@
 /share/
 pyvenv.cfg
 /Library/
+/hand_recognition_custom/training_data/img/

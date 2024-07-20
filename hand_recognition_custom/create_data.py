@@ -7,8 +7,10 @@ import time
 
 import json
 import uuid 
+import protobuf_to_dict
+import copy
 
-FRAMERATE = 30
+FRAMERATE = 300
 last_time = 0
 
 
@@ -40,6 +42,9 @@ folder = data['folder']
 #open a box with the webcan feed and the hand detection
 while True:
 
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+
     if time.time() - last_time < 1/FRAMERATE:
         continue
 
@@ -56,9 +61,12 @@ while True:
     frame.flags.writeable = True
     frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
 
+    frame_to_save = copy.deepcopy(frame)
+
     if results.multi_hand_landmarks:
 
         hands_box = []
+        landmark_data = []
 
         for hand_landmarks in results.multi_hand_landmarks:
 
@@ -70,6 +78,7 @@ while True:
             for id, lm in enumerate(hand_landmarks.landmark):
                 h, w, c = frame.shape
                 cx, cy = int(lm.x*w), int(lm.y*h)
+                landmark_data.append([id, cx, cy])
                 min_x = min(min_x, lm.x)
                 min_y = min(min_y, lm.y)
                 max_x = max(max_x, lm.x)
@@ -88,17 +97,16 @@ while True:
         new_uuid = str(uuid.uuid4())
 
         #save the image
-        cv2.imwrite(f"./training_data/{folder}{new_uuid}.jpg", frame)
+        cv2.imwrite(f"./training_data/{folder}{new_uuid}.jpg", frame_to_save)
 
         #save the landmarks, the box coordinate and the number of hand detected in a json file
         with open(f"./training_data/{folder}{new_uuid}.json", 'w') as f:
-            json.dump({'landmarks': hand_landmarks.landmark, 'box': hands_box, 'nbrOfHands': len(results.multi_hand_landmarks)}, f)
+
+            json.dump({'landmarks': landmark_data, 'box': hands_box, 'nbrOfHands': len(results.multi_hand_landmarks)}, f)
 
         #update the data file
+        data['images'][data['nbrOfImages']] = {"name": f"{new_uuid}.jpg","label":f"{new_uuid}.json"}
         data['nbrOfImages'] += 1
-
-            
-
 
     cv2.imshow('Hand Recognition', frame)
     
