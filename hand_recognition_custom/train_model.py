@@ -7,8 +7,6 @@ from torch.utils.data import *
 from torchvision import transforms
 import torch.nn as nn
 
-from alive_progress import alive_bar
-
 
 class HandGestureDataset(Dataset):
     def __init__(self, path, label_type="box", transform=None):
@@ -18,6 +16,8 @@ class HandGestureDataset(Dataset):
 
         with open(f"{path}/data_infos.json", 'r') as f:
             self.data_infos = json.load(f)
+
+        self.data_folder = self.data_infos["folder"]
 
         data = []
 
@@ -37,8 +37,8 @@ class HandGestureDataset(Dataset):
         
         img_path, label_path = self.data[idx]
 
-        img = cv2.imread(f"{self.path}/{img_path}")
-        label_json = json.load(open(f"{self.path}/{label_path}"))
+        img = cv2.imread(f"{self.path}/{self.data_folder}{img_path}")
+        label_json = json.load(open(f"{self.path}/{self.data_folder}{label_path}"))
 
         label = []
 
@@ -116,7 +116,7 @@ def main():
     dataset = HandGestureDataset(path="./training_data", label_type="landmarks", transform=transform_img_gretscale)
 
     #set device
-    device = torch.device('cpu')
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     #hyperparameters
     num_epochs = 1
