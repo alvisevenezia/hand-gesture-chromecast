@@ -4,14 +4,7 @@ mediapipe
 keras
 tensorflow
 pychromecast
-tensorboard-data-server
-markupsafe
-scipy
-pillow
-kiwisolver
 torch
-lxml
 uuid
-protobuf3-to-dict
 torchvision
-alive_progress
+alive-progress

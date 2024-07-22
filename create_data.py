@@ -40,11 +40,10 @@ while True:
         print("Ignoring empty camera frame.")
         continue
 
-    frame = cv2.cvtColor(cv2.flip(frame, 1), cv2.COLOR_BGR2RGB)
+    frame = cv2.flip(frame, 1)
     frame.flags.writeable = False
     results = hands.process(frame)
     frame.flags.writeable = True
-    frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
 
     if results.multi_hand_landmarks:
         for hand_landmarks in results.multi_hand_landmarks:
