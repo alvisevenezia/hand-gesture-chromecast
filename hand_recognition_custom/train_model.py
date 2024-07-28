@@ -139,8 +139,10 @@ def main():
     #set device
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
+    print(f"Device: {device}")
+
     #hyperparameters
-    num_epochs = 1
+    num_epochs = 10
     num_classes = 21
     learning_rate = 0.001
     batch_size = 128
@@ -175,7 +177,7 @@ def main():
         for id, (images, keypoints,confidence) in enumerate(train_loader):
             images, keypoints = images.to(device), keypoints.to(device)
 
-            confidence_target = torch.tensor(confidence, dtype=torch.float32).to(device)
+            confidence_target = confidence.to(device)
             
             optimizer.zero_grad()
             outputs, confidences = model(images)
