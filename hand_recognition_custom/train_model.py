@@ -112,12 +112,15 @@ class KeypointConfidenceLoss(nn.Module):
     def __init__(self):
         super(KeypointConfidenceLoss, self).__init__()
         self.mse_loss = nn.MSELoss()
-        self.bce_loss = nn.BCELoss()
 
     def forward(self, keypoints_pred, keypoints_target, confidence_pred, confidence_target):
+       
+        if torch.sum(keypoints_pred) < 0.01:
+            return 0
+
         keypoints_loss = self.mse_loss(keypoints_pred, keypoints_target)
-        confidence_loss = self.bce_loss(confidence_pred, confidence_target)
-        return keypoints_loss + confidence_loss
+
+        return keypoints_loss
             
 
 def transform_img_gretscale(img):
@@ -140,7 +143,7 @@ def main():
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     #hyperparameters
-    num_epochs = 1
+    num_epochs = 50
     num_classes = 21
     learning_rate = 0.001
     batch_size = 128
@@ -191,9 +194,10 @@ def main():
 
         
 
-    #save model
+        #save model
 
-    torch.save(model.state_dict(), "./models/hand_gesture_model.pth")
+        torch.save(model.state_dict(), "./models/hand_gesture_model.pth")
+        print("Model saved")
 
     check_accuracy(test_loader, model, device,criterion)
 

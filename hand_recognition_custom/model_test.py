@@ -27,8 +27,6 @@ def main():
 
             h, w, _ = frame.shape
 
-            scale_x, scale_y = w/128, h/128
-
             input_frame = cv2.resize(frame, (128,128))
             #input_frame = cv2.cvtColor(input_frame, cv2.COLOR_BGR2GRAY)
             input_frame = torch.tensor(input_frame, dtype=torch.float32).unsqueeze(0).permute(0, 3, 1, 2)
@@ -43,6 +41,8 @@ def main():
             max_x = 0
             max_y = 0
 
+            print(sum(keypoints))
+
             for i in range(21):
 
                 min_x = min(min_x, keypoints[i*2])
@@ -50,7 +50,7 @@ def main():
                 max_x = max(max_x, keypoints[i*2])
                 max_y = max(max_y, keypoints[i*2 + 1])
 
-            frame = cv2.rectangle(frame, (int(min_x*scale_x), int(min_y*scale_y)), (int(max_x*scale_x), int(max_y*scale_y)), (0, 255, 0), 2)
+            frame = cv2.rectangle(frame, (int(min_x*w), int(min_y*h)), (int(max_x*w), int(max_y*h)), (0, 255, 0), 2)
             frame = cv2.rectangle(frame, (int(min_x), int(min_y)), (int(max_x), int(max_y)), (255, 255, 0), 2)
 
             cv2.imshow("Frame", frame)

@@ -54,7 +54,7 @@ def main():
 
                         landmark_data[id*2] = lm.x
                         landmark_data[id*2 + 1] = lm.y
-                        
+                            
                         min_x = min(min_x, lm.x)
                         min_y = min(min_y, lm.y)
                         max_x = max(max_x, lm.x)
